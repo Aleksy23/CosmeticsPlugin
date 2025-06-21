@@ -8,15 +8,12 @@ import com.Aleksy23.gui.WingsMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent; // NOWY IMPORT
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.Location;
@@ -204,6 +201,12 @@ public class MenuClickListener implements Listener {
                 pet.setCustomName(player.getName() + "'s " + clickedItem.getItemMeta().getDisplayName());
                 pet.setCustomNameVisible(true);
 
+                // DODATKOWE ULEPSZENIA PETÓW
+                pet.setRemoveWhenFarAway(false); // Pet nie zniknie gdy gracz się oddali
+                pet.setCanPickupItems(false); // Pet nie będzie podnosił przedmiotów
+                pet.setMaxHealth(40.0); // Zwiększone zdrowie
+                pet.setHealth(40.0); // Pełne zdrowie
+
                 CosmeticsPlugin.activePets.put(playerUUID, pet);
                 player.sendMessage(ChatColor.AQUA + "Wlaczono peta: " + clickedItem.getItemMeta().getDisplayName() + ChatColor.AQUA + "!");
             } else {
@@ -277,6 +280,48 @@ public class MenuClickListener implements Listener {
         // Usuń Skrzydla - już nie trzeba usuwać ArmorStandów
         if (CosmeticsPlugin.activeWings.containsKey(playerUUID)) {
             CosmeticsPlugin.activeWings.remove(playerUUID);
+        }
+    }
+
+    // NOWA METODA - obsługa klikania prawym przyciskiem na pety
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        
+        // Sprawdź czy kliknięta entity to pet któregoś gracza
+        for (UUID playerUUID : CosmeticsPlugin.activePets.keySet()) {
+            LivingEntity pet = CosmeticsPlugin.activePets.get(playerUUID);
+            
+            if (pet != null && pet.equals(event.getRightClicked())) {
+                event.setCancelled(true); // Anuluj domyślną interakcję
+                
+                // SPECJALNA OBSŁUGA DLA WILKA - SIADANIE
+                if (pet.getType() == EntityType.WOLF) {
+                    Wolf wolf = (Wolf) pet;
+                    if (wolf.isSitting()) {
+                        wolf.setSitting(false);
+                        player.sendMessage(ChatColor.YELLOW + "Wilk wstał!");
+                    } else {
+                        wolf.setSitting(true);
+                        player.sendMessage(ChatColor.GREEN + "Wilk usiadł!");
+                    }
+                    return;
+                }
+                
+                // JAZDA NA INNYCH PETACH (kurczak, świnia)
+                if (player.getVehicle() != null) {
+                    // Jeśli gracz już na czymś jedzie, zsadź go
+                    player.leaveVehicle();
+                    player.sendMessage(ChatColor.YELLOW + "Zsiadłeś z peta!");
+                } else {
+                    // Wsadź gracza na peta
+                    pet.setPassenger(player);
+                    player.sendMessage(ChatColor.GREEN + "Wsiadłeś na peta!");
+                    player.sendMessage(ChatColor.GRAY + "Ruszaj się (WSAD) - pet idzie w kierunku patrzenia");
+                    player.sendMessage(ChatColor.GRAY + "Spacja - skok, Podwójna spacja - super skok, Shift - zsiadź");
+                }
+                return;
+            }
         }
     }
 }

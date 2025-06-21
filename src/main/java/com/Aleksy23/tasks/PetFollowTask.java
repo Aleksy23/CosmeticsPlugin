@@ -31,19 +31,24 @@ public class PetFollowTask extends BukkitRunnable {
                     continue;
                 }
 
+                // Sprawdź czy ktoś jedzie na pecie - jeśli tak, nie ruszaj petem
+                if (pet.getPassenger() != null) {
+                    continue; // Pomiń, jeśli ktoś jedzie na pecie
+                }
+
                 Location playerLoc = player.getLocation();
                 Location petLoc = pet.getLocation();
 
                 double distance = playerLoc.distance(petLoc);
 
                 // Jeśli pet jest za daleko, teleportuj go
-                if (distance > 8.0) {
+                if (distance > 15.0) { // Zwiększono z 8.0 do 15.0
                     Vector direction = playerLoc.getDirection().multiply(-2); // Za graczem
                     Location teleportLoc = playerLoc.clone().add(direction).add(0, 0.5, 0);
                     pet.teleport(teleportLoc);
                 } 
                 // Jeśli pet jest w średniej odległości, przesuń go w stronę gracza
-                else if (distance > 3.0) {
+                else if (distance > 6.0) { // Zwiększono z 3.0 do 6.0
                     Vector direction = playerLoc.toVector().subtract(petLoc.toVector()).normalize().multiply(0.3);
                     direction.setY(0); // Nie lataj w górę
                     pet.setVelocity(direction);

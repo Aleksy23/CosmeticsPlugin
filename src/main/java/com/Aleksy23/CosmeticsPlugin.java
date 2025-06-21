@@ -1,7 +1,13 @@
 package com.Aleksy23;
 
 import com.Aleksy23.commands.CosmeticsCommand;
+import com.Aleksy23.commands.PetNameCommand;
 import com.Aleksy23.listeners.MenuClickListener;
+import com.Aleksy23.listeners.PetDamageListener;
+import com.Aleksy23.listeners.PetRideListener;
+import com.Aleksy23.listeners.PetJumpListener;
+import com.Aleksy23.listeners.PetDismountListener;
+import com.Aleksy23.manager.PetDamageManager;
 import com.Aleksy23.tasks.ParticleTask;
 import com.Aleksy23.tasks.MiniPetFollowTask;
 import com.Aleksy23.tasks.PetFollowTask;
@@ -19,10 +25,10 @@ public class CosmeticsPlugin extends JavaPlugin {
     public static HashMap<UUID, Effect> activeParticles = new HashMap<>();
     public static HashMap<UUID, ArmorStand> activeMiniPets = new HashMap<>();
     public static HashMap<UUID, LivingEntity> activePets = new HashMap<>();
-    // ZMIENIONA HASHPAMA DLA SKRZYDEŁ - TERAZ PRZECHOWUJE EFFECT ZAMIAST ARMORSTANDÓW
     public static HashMap<UUID, Effect> activeWings = new HashMap<>();
 
     private static CosmeticsPlugin instance;
+    private PetDamageManager petDamageManager;
 
     @Override
     public void onEnable() {
@@ -30,17 +36,25 @@ public class CosmeticsPlugin extends JavaPlugin {
         instance = this;
 
         getCommand("cosmetics").setExecutor(new CosmeticsCommand());
+        getCommand("petname").setExecutor(new PetNameCommand());
+        
         getServer().getPluginManager().registerEvents(new MenuClickListener(), this);
+        getServer().getPluginManager().registerEvents(new PetDamageListener(), this);
+        getServer().getPluginManager().registerEvents(new PetRideListener(), this);
+        getServer().getPluginManager().registerEvents(new PetJumpListener(), this);
+        getServer().getPluginManager().registerEvents(new PetDismountListener(), this);
 
         new ParticleTask(this).runTaskTimer(this, 0L, 5L);
         new MiniPetFollowTask(this).runTaskTimer(this, 0L, 1L);
         new PetFollowTask(this).runTaskTimer(this, 0L, 10L);
-        // Częstotliwość dla skrzydeł cząsteczkowych musi być dość wysoka, aby były płynne.
-        // 1 tick (0.05 sekundy) jest idealny dla płynności, ale może obciążyć serwer.
-        // Ustawienie na 8L (~0.4 sekundy) jest kompromisem między płynnością a wydajnością.
         new WingsFollowTask(this).runTaskTimer(this, 0L, 8L);
+        petDamageManager = new PetDamageManager();
     }
-
+    
+    public PetDamageManager getPetDamageManager() {
+        return petDamageManager;
+    }
+    
     @Override
     public void onDisable() {
         getLogger().info("CosmeticsPlugin zostal wylaczony!");
@@ -61,7 +75,7 @@ public class CosmeticsPlugin extends JavaPlugin {
         }
         activePets.clear();
 
-        // Usuń wszystkie aktywne skrzydła - już nie trzeba usuwać ArmorStandów, bo to efekty
+        // Usuń wszystkie aktywne skrzydła
         activeWings.clear();
     }
 

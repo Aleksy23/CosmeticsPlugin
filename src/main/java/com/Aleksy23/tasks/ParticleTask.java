@@ -75,7 +75,7 @@ public class ParticleTask extends BukkitRunnable {
                 } 
                 // Więcej iskier dla efektu CRIT
                 else if (particleEffect == Effect.CRIT) {
-                    for (int i = 0; i < 15; i++) {
+                    for (int i = 0; i < 8; i++) { // Zmniejszono z 15 do 8
                         double offsetX = (random.nextDouble() - 0.5) * 2.0;
                         double offsetY = random.nextDouble() * 2.0;
                         double offsetZ = (random.nextDouble() - 0.5) * 2.0;
@@ -86,7 +86,7 @@ public class ParticleTask extends BukkitRunnable {
                 }
                 // Więcej śnieżynek dla efektu SNOW
                 else if (particleEffect == Effect.SNOW_SHOVEL) {
-                    for (int i = 0; i < 20; i++) {
+                    for (int i = 0; i < 10; i++) { // Zmniejszono z 20 do 10
                         double offsetX = (random.nextDouble() - 0.5) * 3.0;
                         double offsetY = random.nextDouble() * 3.0 + 1.0;
                         double offsetZ = (random.nextDouble() - 0.5) * 3.0;
@@ -95,14 +95,14 @@ public class ParticleTask extends BukkitRunnable {
                         player.getWorld().playEffect(snowLoc, Effect.SNOW_SHOVEL, 0);
                         
                         // Dodatkowe płatki śniegu
-                        if (random.nextDouble() < 0.3) {
+                        if (random.nextDouble() < 0.2) { // Zmniejszono z 0.3 do 0.2
                             player.getWorld().playEffect(snowLoc.add(0, 0.5, 0), Effect.FIREWORKS_SPARK, 0);
                         }
                     }
                 }
                 // Dodatkowe bąbelki
                 else if (particleEffect == Effect.WATERDRIP) {
-                    for (int i = 0; i < 12; i++) {
+                    for (int i = 0; i < 3; i++) { // Zmniejszono z 12 do 3
                         double offsetX = (random.nextDouble() - 0.5) * 2.5;
                         double offsetY = random.nextDouble() * 2.5;
                         double offsetZ = (random.nextDouble() - 0.5) * 2.5;
@@ -113,24 +113,24 @@ public class ParticleTask extends BukkitRunnable {
                 }
                 // Zmniejszony efekt flame z iskrami
                 else if (particleEffect == Effect.MOBSPAWNER_FLAMES) {
-                    // Główny efekt flame - zmniejszono
-                    for (int i = 0; i < 4; i++) { // Zmniejszono z 8 do 4
-                        double offsetX = (random.nextDouble() - 0.5) * 1.0; // Zmniejszono obszar
+                    // Główny efekt flame - zmniejszono jeszcze bardziej
+                    for (int i = 0; i < 2; i++) { // Zmniejszono z 4 do 2
+                        double offsetX = (random.nextDouble() - 0.5) * 1.0;
                         double offsetY = random.nextDouble() * 1.0;
                         double offsetZ = (random.nextDouble() - 0.5) * 1.0;
                         
                         Location flameLoc = loc.clone().add(offsetX, offsetY + 0.5, offsetZ);
                         player.getWorld().playEffect(flameLoc, Effect.MOBSPAWNER_FLAMES, 0);
                         
-                        // Dodatkowe iskry (dawny electric spark) - zmniejszono
-                        if (random.nextDouble() < 0.3) { // Zmniejszono z 0.4 do 0.3
+                        // Dodatkowe iskry - jeszcze mniej
+                        if (random.nextDouble() < 0.2) { // Zmniejszono z 0.3 do 0.2
                             player.getWorld().playEffect(flameLoc.add(0, 0.2, 0), Effect.CRIT, 0);
                         }
                     }
                 }
                 // Standardowe efekty z lekkim ulepszeniem
                 else {
-                    for (int i = 0; i < 3; i++) {
+                    for (int i = 0; i < 1; i++) { // Zmniejszono z 3 do 2
                         double offsetX = (random.nextDouble() - 0.5) * 1.0;
                         double offsetY = random.nextDouble() * 1.0;
                         double offsetZ = (random.nextDouble() - 0.5) * 1.0;
