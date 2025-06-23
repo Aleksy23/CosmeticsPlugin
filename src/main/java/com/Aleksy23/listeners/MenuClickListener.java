@@ -5,6 +5,7 @@ import com.Aleksy23.gui.ParticleMenu;
 import com.Aleksy23.gui.MiniPetMenu;
 import com.Aleksy23.gui.PetMenu;
 import com.Aleksy23.gui.WingsMenu;
+import com.Aleksy23.manager.PetManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -180,35 +181,23 @@ public class MenuClickListener implements Listener {
             }
 
             EntityType chosenPetType = null;
+            String petDisplayName = null;
+
             if (clickedItem.getType() == Material.EGG) {
                 chosenPetType = EntityType.CHICKEN;
+                petDisplayName = player.getName() + "'s &eKurczak";
             } else if (clickedItem.getType() == Material.PORK) {
                 chosenPetType = EntityType.PIG;
+                petDisplayName = player.getName() + "'s &dŚwinka";
             } else if (clickedItem.getType() == Material.BONE) {
                 chosenPetType = EntityType.WOLF;
+                petDisplayName = player.getName() + "'s &7Wilk";
             }
 
             if (chosenPetType != null) {
-                Location spawnLoc = player.getLocation().add(0, 0.5, 0);
-                LivingEntity pet = (LivingEntity) player.getWorld().spawnEntity(spawnLoc, chosenPetType);
-
-                if (pet instanceof Tameable) {
-                    Tameable tameablePet = (Tameable) pet;
-                    tameablePet.setTamed(true);
-                    tameablePet.setOwner(player);
-                }
-
-                pet.setCustomName(player.getName() + "'s " + clickedItem.getItemMeta().getDisplayName());
-                pet.setCustomNameVisible(true);
-
-                // DODATKOWE ULEPSZENIA PETÓW
-                pet.setRemoveWhenFarAway(false); // Pet nie zniknie gdy gracz się oddali
-                pet.setCanPickupItems(false); // Pet nie będzie podnosił przedmiotów
-                pet.setMaxHealth(40.0); // Zwiększone zdrowie
-                pet.setHealth(40.0); // Pełne zdrowie
-
-                CosmeticsPlugin.activePets.put(playerUUID, pet);
+                LivingEntity pet = PetManager.spawnPet(player, chosenPetType, petDisplayName);
                 player.sendMessage(ChatColor.AQUA + "Wlaczono peta: " + clickedItem.getItemMeta().getDisplayName() + ChatColor.AQUA + "!");
+                player.sendMessage(ChatColor.GRAY + "Kliknij PPM na peta aby na niego wsiąść!");
             } else {
                 player.sendMessage(ChatColor.YELLOW + "Nie wybrano zadnego peta.");
             }

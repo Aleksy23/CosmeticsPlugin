@@ -2,11 +2,14 @@ package com.Aleksy23;
 
 import com.Aleksy23.commands.CosmeticsCommand;
 import com.Aleksy23.commands.PetNameCommand;
+import com.Aleksy23.config.ConfigManager;
+import com.Aleksy23.database.DatabaseManager;
 import com.Aleksy23.listeners.MenuClickListener;
 import com.Aleksy23.listeners.PetDamageListener;
 import com.Aleksy23.listeners.PetRideListener;
 import com.Aleksy23.listeners.PetJumpListener;
 import com.Aleksy23.listeners.PetDismountListener;
+import com.Aleksy23.listeners.PlayerJoinListener;
 import com.Aleksy23.manager.PetDamageManager;
 import com.Aleksy23.tasks.ParticleTask;
 import com.Aleksy23.tasks.MiniPetFollowTask;
@@ -29,6 +32,8 @@ public class CosmeticsPlugin extends JavaPlugin {
 
     private static CosmeticsPlugin instance;
     private PetDamageManager petDamageManager;
+    private DatabaseManager databaseManager;
+    private ConfigManager configManager;
 
     @Override
     public void onEnable() {
@@ -43,12 +48,19 @@ public class CosmeticsPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PetRideListener(), this);
         getServer().getPluginManager().registerEvents(new PetJumpListener(), this);
         getServer().getPluginManager().registerEvents(new PetDismountListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
 
         new ParticleTask(this).runTaskTimer(this, 0L, 5L);
         new MiniPetFollowTask(this).runTaskTimer(this, 0L, 1L);
         new PetFollowTask(this).runTaskTimer(this, 0L, 10L);
         new WingsFollowTask(this).runTaskTimer(this, 0L, 8L);
         petDamageManager = new PetDamageManager();
+
+        // Inicjalizuj bazę danych
+        databaseManager = new DatabaseManager(this);
+
+        // Inicjalizuj config manager
+        configManager = new ConfigManager(this);
     }
     
     public PetDamageManager getPetDamageManager() {
@@ -77,6 +89,19 @@ public class CosmeticsPlugin extends JavaPlugin {
 
         // Usuń wszystkie aktywne skrzydła
         activeWings.clear();
+
+        // Zamknij połączenie z bazą danych
+        if (databaseManager != null) {
+            databaseManager.closeConnection();
+        }
+    }
+    
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
     }
 
     public static CosmeticsPlugin getInstance() {

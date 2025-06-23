@@ -1,0 +1,12 @@
+# Konfiguracja CosmeticsPlugin
+particles:
+  enabled: true
+  max-distance: 50
+  
+pets:
+  max-health: 40.0
+  follow-distance: 6.0
+  teleport-distance: 15.0
+  
+database:
+  save-interval: 300 # 5 minut w sekundach
