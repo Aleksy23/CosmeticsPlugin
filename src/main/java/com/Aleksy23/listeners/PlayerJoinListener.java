@@ -24,15 +24,21 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         
-        // Załaduj kosmetyki gracza z bazy danych
-        DatabaseManager.PlayerCosmetics cosmetics = plugin.getDatabaseManager().loadPlayerCosmetics(playerUUID);
-        
-        if (cosmetics.getParticle() != null) {
-            CosmeticsPlugin.activeParticles.put(playerUUID, cosmetics.getParticle());
-        }
-        
-        if (cosmetics.getWings() != null) {
-            CosmeticsPlugin.activeWings.put(playerUUID, cosmetics.getWings());
+        // Załaduj kosmetyki gracza z bazy danych (jeśli baza działa)
+        if (plugin.getDatabaseManager() != null) {
+            try {
+                DatabaseManager.PlayerCosmetics cosmetics = plugin.getDatabaseManager().loadPlayerCosmetics(playerUUID);
+                
+                if (cosmetics.getParticle() != null) {
+                    CosmeticsPlugin.activeParticles.put(playerUUID, cosmetics.getParticle());
+                }
+                
+                if (cosmetics.getWings() != null) {
+                    CosmeticsPlugin.activeWings.put(playerUUID, cosmetics.getWings());
+                }
+            } catch (Exception e) {
+                plugin.getLogger().warning("Błąd ładowania kosmetyków dla gracza " + player.getName() + ": " + e.getMessage());
+            }
         }
         
         // Pet zostanie przywrócony gdy gracz go wybierze z menu
@@ -43,12 +49,18 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         
-        // Zapisz aktualne kosmetyki gracza
-        Effect particle = CosmeticsPlugin.activeParticles.get(playerUUID);
-        Effect wings = CosmeticsPlugin.activeWings.get(playerUUID);
-        String pet = null; // TODO: dodaj logikę zapisywania typu peta
-        
-        plugin.getDatabaseManager().savePlayerCosmetics(playerUUID, particle, pet, wings);
+        // Zapisz aktualne kosmetyki gracza (jeśli baza działa)
+        if (plugin.getDatabaseManager() != null) {
+            try {
+                Effect particle = CosmeticsPlugin.activeParticles.get(playerUUID);
+                Effect wings = CosmeticsPlugin.activeWings.get(playerUUID);
+                String pet = null; // TODO: dodaj logikę zapisywania typu peta
+                
+                plugin.getDatabaseManager().savePlayerCosmetics(playerUUID, particle, pet, wings);
+            } catch (Exception e) {
+                plugin.getLogger().warning("Błąd zapisywania kosmetyków dla gracza " + player.getName() + ": " + e.getMessage());
+            }
+        }
         
         // Usuń kosmetyki z pamięci
         CosmeticsPlugin.activeParticles.remove(playerUUID);

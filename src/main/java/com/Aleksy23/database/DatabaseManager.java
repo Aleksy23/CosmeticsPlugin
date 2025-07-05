@@ -16,15 +16,24 @@ public class DatabaseManager {
     
     private void initDatabase() {
         try {
+            // Załaduj sterownik SQLite
+            Class.forName("org.sqlite.JDBC");
+            
             // Upewnij się że folder istnieje
             if (!plugin.getDataFolder().exists()) {
                 plugin.getDataFolder().mkdirs();
             }
             
-            connection = DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder() + "/cosmetics.db");
+            String dbPath = plugin.getDataFolder().getAbsolutePath() + "/cosmetics.db";
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
             createTables();
+            plugin.getLogger().info("Połączono z bazą danych SQLite: " + dbPath);
         } catch (SQLException e) {
             plugin.getLogger().severe("Nie można połączyć z bazą danych: " + e.getMessage());
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            plugin.getLogger().severe("Nie można załadować sterownika SQLite: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

@@ -56,11 +56,16 @@ public class CosmeticsPlugin extends JavaPlugin {
         new WingsFollowTask(this).runTaskTimer(this, 0L, 8L);
         petDamageManager = new PetDamageManager();
 
-        // Inicjalizuj bazę danych
-        databaseManager = new DatabaseManager(this);
-
         // Inicjalizuj config manager
         configManager = new ConfigManager(this);
+
+        // Inicjalizuj bazę danych
+        try {
+            databaseManager = new DatabaseManager(this);
+        } catch (Exception e) {
+            getLogger().warning("Nie można zainicjalizować bazy danych: " + e.getMessage());
+            getLogger().warning("Plugin będzie działał bez zapisywania danych!");
+        }
     }
     
     public PetDamageManager getPetDamageManager() {

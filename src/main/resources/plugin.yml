@@ -1,17 +1,17 @@
 name: CosmeticsPlugin
 version: 1.0-SNAPSHOT
-main: com.Aleksy23.CosmeticsPlugin # Pełna ścieżka do Twojej głównej klasy
+main: com.Aleksy23.CosmeticsPlugin
 author: Aleksy23
-description: Plugin dodajacy kosmetyki do gry.
-api-version: 1.13 # To informuje Spigota o kompatybilności API. Dla 1.8 możesz zostawić 1.13 lub użyć 1.8.
+description: Plugin adding cosmetics to the game.
+api-version: 1.13
 
 commands:
   cosmetics:
-    description: Otwiera menu z kosmetykami.
-    usage: /Cosmetics
+    description: Opens cosmetics menu.
+    usage: /cosmetics
     permission: cosmeticsplugin.use
-    permission-message: Nie masz uprawnien do uzycia tej komendy!
+    permission-message: You don't have permission to use this command!
   petname:
-    description: Nadaje nazwe Twojemu petowi
-    usage: /petname <nazwa>
+    description: Names your pet
+    usage: /petname <name>
     aliases: [nazwapet, pname]
